@@ -1,22 +1,47 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+using std::vector;
+
 class Queue {
- public:
-  Queue(size_t capacity) {}
-  void Enqueue(int x) {
-    // TODO - you fill in here.
-    return;
-  }
-  int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
-  }
-  int Size() const {
-    // TODO - you fill in here.
-    return 0;
-  }
+public:
+    Queue(size_t capacity)
+        : data_(vector<int>(capacity)), first_(0), last_(0), num_elements_(0)
+    {}
+
+    void Enqueue(int x) {
+        if (data_.size() == num_elements_) {
+            // first_ == last_, copy [0,last_) to [num_elements_, num_elements_+last_)
+            data_.resize(2*data_.size());
+            std::copy(data_.begin(), data_.begin()+last_, data_.begin()+num_elements_);
+            last_ = (first_ + num_elements_) % data_.size();
+        }
+        data_[last_] = x;
+        last_ = (last_ + 1) % data_.size();
+        num_elements_++;
+    }
+
+    int Dequeue() {
+        if (num_elements_ == 0) {
+            throw(std::length_error("Dequeue on empty queue."));
+        }
+        int val = data_[first_];
+        first_ = (first_ + 1) % data_.size();
+        num_elements_--;
+        return val;
+    }
+
+    int Size() const {
+        return num_elements_;
+    }
+
+    private:
+        vector<int> data_;
+        int first_;
+        int last_;
+        int num_elements_;
 };
+
 struct QueueOp {
   enum { kConstruct, kDequeue, kEnqueue, kSize } op;
   int argument;

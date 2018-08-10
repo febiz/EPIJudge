@@ -1,24 +1,91 @@
+#include <deque>
+#include <set>
 #include <vector>
+#include <unordered_map>
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+using std::map;
+using std::pair;
+using std::unordered_map;
+
+struct PrioAndPrice {
+    long priority;
+    int price;
+};
 
 class LruCache {
  public:
-  LruCache(size_t capacity) {}
+  LruCache(size_t capacity) : capacity_(capacity), cnt_(0) {}
   int Lookup(int isbn) {
-    // TODO - you fill in here.
-    return 0;
+      int price = -1;
+      auto search = cache_.find(isbn);
+      if (search != cache_.end()) {
+          price = search->second.price;
+          UpdatePriority(isbn, search->second.priority);
+      }
+
+//      Debug("Lookup " + std::to_string(isbn));
+      return price;
   }
+
   void Insert(int isbn, int price) {
-    // TODO - you fill in here.
-    return;
+      auto search = cache_.find(isbn);
+      if (search != cache_.end()) {
+          UpdatePriority(isbn, search->second.priority);
+      } else {
+          if (cache_.size() == capacity_) {
+              // find entry with lowerst priority and erase from both maps
+              auto prio_last_it = std::prev(prio_.end());
+              cache_.erase(prio_last_it->second);
+              prio_.erase(prio_last_it);
+          }
+          cache_[isbn] = {cnt_, price};
+          prio_[cnt_++] = isbn;
+      }
+
+//      Debug("Insert (" + std::to_string(isbn) + ", " + std::to_string(price) + ")");
   }
+
   bool Erase(int isbn) {
-    // TODO - you fill in here.
-    return true;
+      auto search = cache_.find(isbn);
+      if (search != cache_.end()) {
+          prio_.erase(search->second.priority);
+          cache_.erase(search);
+
+//          Debug("Erase " + std::to_string(isbn));
+          return true;
+      } else {
+
+//          Debug("Erase " + std::to_string(isbn));
+          return false;
+      }
   }
+
+private:
+  void UpdatePriority(int isbn, int priority) {
+      // NOTE: this takes O(log(capacity))
+      // better: store pointer to priority list directly in hash map
+      prio_.erase(priority);
+      cache_[isbn].priority = cnt_;
+      prio_[cnt_++] = isbn;
+  }
+
+  void Debug(std::string s) {
+      std::cout << std::endl << s << std::endl;
+      for (auto it : prio_) {
+          std::cout << it.second << " -> (" << cache_[it.second].priority << ", " << cache_[it.second].price << ")" << std::endl;
+      }
+      std::cout << "----------" << std::endl;
+  }
+
+private:
+  unordered_map<int, PrioAndPrice> cache_;  // isbn -> (priority, price)
+  map<long, int, std::greater<>> prio_;     // priority -> isbn
+  size_t capacity_;
+  long cnt_;
 };
+
 struct Op {
   std::string code;
   int arg1;

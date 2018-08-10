@@ -1,10 +1,20 @@
 #include <string>
+#include <unordered_set>
 #include "test_framework/generic_test.h"
 using std::string;
+using std::unordered_set;
 
 bool CanFormPalindrome(const string& s) {
-  // TODO - you fill in here.
-  return true;
+    unordered_set<char> char_set;
+    for (const char& c : s) {
+        auto search = char_set.find(c);
+        if (search != char_set.end()) {
+            char_set.erase(c);
+        } else {
+            char_set.insert(c);
+        }
+    }
+    return ((s.size() % 2) == 0) ? char_set.size() == 0 : char_set.size() == 1;
 }
 
 int main(int argc, char* argv[]) {

@@ -14,11 +14,15 @@ struct BinaryTreeNode {
   int size;
 };
 
+struct NodeAndCount {
+    BinaryTreeNode<int>* node;
+    int visited_count;
+};
+
 const BinaryTreeNode<int>* FindKthNodeBinaryTree(
     const unique_ptr<BinaryTreeNode<int>>& tree, int k) {
-  // TODO - you fill in here.
-  return nullptr;
 }
+
 template <typename KeyT>
 struct SerializationTraits<std::unique_ptr<BinaryTreeNode<KeyT>>>
     : BinaryTreeSerializationTraits<std::unique_ptr<BinaryTreeNode<KeyT>>,

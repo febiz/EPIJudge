@@ -3,8 +3,19 @@
 using std::vector;
 
 bool MatrixSearch(const vector<vector<int>>& A, int x) {
-  // TODO - you fill in here.
-  return true;
+    int i = 0, j = A[0].size()-1;
+    while (i < A.size() && j >= 0) {
+        if (A[i][j] == x) {
+            return true;
+        } else if (A[i][j] < x) {
+            // eliminate row
+            i++;
+        } else if (A[i][j] > x) {
+            // eliminate column
+            j--;
+        }
+    }
+    return false;
 }
 
 int main(int argc, char* argv[]) {

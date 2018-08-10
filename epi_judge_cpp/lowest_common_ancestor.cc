@@ -5,12 +5,33 @@
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
 using std::unique_ptr;
+
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& tree,
                          const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
-  return nullptr;
+    if (!tree) return nullptr;
+
+    // root is one of searched nodes, it has to be the ancestor
+    if (tree == node0 || tree == node1) return tree.get();
+
+    // search left and right subtrees recursively
+    BinaryTreeNode<int>* left = LCA(tree->left, node0, node1);
+    BinaryTreeNode<int>* right = LCA(tree->right, node0, node1);
+
+    // if left subtree does not contain searched node
+    // then the anchestor is right and vice versa.
+    // returns nullptr if both left and right are null
+    if (!left) {
+        return right;
+    } else if (!right) {
+        return left;
+    } else {
+        // left and right subtrees contain a searched node each,
+        // the current node is the anchestor
+        return tree.get();
+    }
 }
+
 int LcaWrapper(TimedExecutor& executor,
                const unique_ptr<BinaryTreeNode<int>>& tree, int key0,
                int key1) {

@@ -3,8 +3,22 @@
 using std::string;
 
 string LookAndSay(int n) {
-  // TODO - you fill in here.
-  return "";
+    string result = "1";
+    for (int i = 1; i < n; ++i) {
+        string next_result;
+        for (int j = 0; j < result.size(); ++j) {
+            int k = j+1;
+            while (k < result.size() && result[k] == result[j]) {
+                k++;
+            }
+            next_result.push_back('0' + (k-j));
+            next_result.push_back(result[j]);
+            j = k - 1;
+        }
+        result = next_result;
+    }
+
+    return result;
 }
 
 int main(int argc, char* argv[]) {

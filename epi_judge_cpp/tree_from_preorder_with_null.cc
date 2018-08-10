@@ -8,8 +8,26 @@ using std::vector;
 
 unique_ptr<BinaryTreeNode<int>> ReconstructPreorder(
     const vector<int*>& preorder) {
-  // TODO - you fill in here.
-  return nullptr;
+    std::stack<unique_ptr<BinaryTreeNode<int>>> s;
+    auto it = preorder.rbegin();
+    while (it != preorder.rend()) {
+        if (*it) {
+            // the last two trees on the stack are the children of the new node
+            unique_ptr<BinaryTreeNode<int>> tl(nullptr), tr(nullptr);
+            if (s.size() >= 2) {
+                tl = std::move(s.top()); s.pop();
+                tr = std::move(s.top()); s.pop();
+            }
+            unique_ptr<BinaryTreeNode<int>> node =
+                std::make_unique<BinaryTreeNode<int>>(
+                        BinaryTreeNode<int>{**it, std::move(tl), std::move(tr)});
+            s.push(std::move(node));
+        } else {
+            s.push(nullptr);
+        }
+        it++;
+    }
+    return std::move(s.top());
 }
 unique_ptr<BinaryTreeNode<int>> ReconstructPreorderWrapper(
     TimedExecutor& executor, const vector<string>& preorder) {

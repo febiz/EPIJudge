@@ -7,8 +7,24 @@ struct MinMax {
 };
 
 MinMax FindMinMax(const vector<int>& A) {
-  // TODO - you fill in here.
-  return {0, 0};
+    int i = 1;
+    MinMax result = {std::numeric_limits<int>::max(),
+                     std::numeric_limits<int>::min()};
+    for (; i < A.size(); i+=2) {
+        if (A[i-1] < A[i]) {
+            result.smallest = std::min(result.smallest, A[i-1]);
+            result.largest = std::max(result.largest, A[i]);
+        } else {
+            result.largest = std::max(result.largest, A[i-1]);
+            result.smallest = std::min(result.smallest, A[i]);
+        }
+    }
+    if (A.size() % 2 != 0) {
+        result.largest = std::max(result.largest, A[i-1]);
+        result.smallest = std::min(result.smallest, A[i-1]);
+    }
+
+    return result;
 }
 template <>
 struct SerializationTraits<MinMax> : UserSerTraits<MinMax, int, int> {};

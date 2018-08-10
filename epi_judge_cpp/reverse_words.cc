@@ -4,9 +4,17 @@
 using std::string;
 
 void ReverseWords(string* s) {
-  // TODO - you fill in here.
-  return;
+    std::reverse(s->begin(), s->end());
+    auto it = s->begin(), it2 = s->begin();
+    while (it2 != s->end()) {
+        while (*it2 != ' ' && it2 != s->end()) {
+            it2++;
+        }
+        std::reverse(it, it2);
+        it = it2 == s->end() ? it2 : ++it2;
+    }
 }
+
 string ReverseWordsWrapper(TimedExecutor& executor, string s) {
   string s_copy = s;
 

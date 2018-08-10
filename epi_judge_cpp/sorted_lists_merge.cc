@@ -2,8 +2,22 @@
 #include "test_framework/generic_test.h"
 shared_ptr<ListNode<int>> MergeTwoSortedLists(shared_ptr<ListNode<int>> L1,
                                               shared_ptr<ListNode<int>> L2) {
-  // TODO - you fill in here.
-  return nullptr;
+
+    shared_ptr<ListNode<int>> dummy(new ListNode<int>());
+    shared_ptr<ListNode<int>> diter(dummy);
+
+    while (L1 && L2) {
+        if (L1->data <= L2->data) {
+            diter->next = L1;
+            L1 = L1->next;
+        } else {
+            diter->next = L2;
+            L2 = L2->next;
+        }
+        diter = diter->next;
+    }
+    diter->next = L1 ? L1 : L2;
+    return dummy->next;
 }
 
 int main(int argc, char* argv[]) {

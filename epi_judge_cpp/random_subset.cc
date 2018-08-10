@@ -9,11 +9,53 @@
 using std::bind;
 using std::iota;
 using std::vector;
+using std::unordered_map;
+
 // Returns a random k-sized subset of {0, 1, ..., n - 1}.
 vector<int> RandomSubset(int n, int k) {
-  // TODO - you fill in here.
-  return {};
+    const bool kUseOnSolution = true;
+    if (kUseOnSolution) {
+        // O(n) time and space
+        vector<int> result(n);
+        iota(result.begin(), result.end(), 0);
+
+        for (int i = 0; i < k; ++i) {
+            int r = rand() % (n-i);
+            std::swap(result[i], result[r+i]);
+        }
+        result.resize(k);
+        return result;
+    } else {
+        // O(k) time and space, only faster if k << n in practice
+        unordered_map<int, int> idxMap;
+        for (int i = 0; i < k; ++i) {
+            int r = rand() % (n-i);
+            auto i1 = idxMap.find(i);
+            auto i2 = idxMap.find(r+i);
+            if (i1 == idxMap.end() && i2 == idxMap.end()) {
+                idxMap[i] = r+i;
+                idxMap[r+i] = i;
+            } else if (i1 != idxMap.end() && i2 == idxMap.end()) {
+                // already swapped some j < i with i
+                idxMap[r+i] = i1->second;
+                i1->second = r+i;
+            } else if (i1 == idxMap.end() && i2 != idxMap.end()) {
+                // already swapped some j < i with r+i
+                idxMap[i] = i2->second;
+                i2->second = i;
+            } else {
+                std::swap(i1->second, i2->second);
+            }
+        }
+        vector<int> result;
+        for (int i = 0; i < k; ++i) {
+            result.push_back(idxMap[i]);
+        }
+
+        return result;
+    }
 }
+
 bool RandomSubsetRunner(TimedExecutor& executor, int n, int k) {
   vector<vector<int>> results;
 

@@ -5,10 +5,19 @@
 #include "test_framework/timed_executor.h"
 using std::bind;
 using std::vector;
+
 vector<int> ComputeRandomPermutation(int n) {
-  // TODO - you fill in here.
-  return {};
+    vector<int> result(n);
+    iota(result.begin(), result.end(), 0);
+
+    for (int i = 0; i < n; ++i) {
+        int r = rand() % (n-i);
+        std::swap(result[i], result[r+i]);
+    }
+
+    return result;
 }
+
 int Factorial(int n) { return n <= 1 ? 1 : n * Factorial(n - 1); }
 
 int PermutationIndex(vector<int> perm) {

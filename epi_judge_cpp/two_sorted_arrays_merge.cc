@@ -3,8 +3,14 @@
 using std::vector;
 
 void MergeTwoSortedArrays(vector<int>& A, int m, const vector<int>& B, int n) {
-  // TODO - you fill in here.
-  return;
+    int insert_pos = m + n - 1;
+    int i = m - 1, j = n - 1;
+    while (i >= 0 && j >= 0) {
+        A[insert_pos--] = A[i] >= B[j] ? A[i--] : B[j--];
+    }
+    while (j >= 0) {
+        A[insert_pos--] = B[j--];
+    }
 }
 vector<int> MergeTwoSortedArraysWrapper(vector<int> A, int m,
                                         const vector<int>& B, int n) {

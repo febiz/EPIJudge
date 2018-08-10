@@ -14,8 +14,16 @@ struct BinaryTreeNode {
 };
 
 void ConstructRightSibling(BinaryTreeNode<int>* tree) {
-  // TODO - you fill in here.
-  return;
+    // This is O(h) space, iterate level by level to do in O(1) space
+    if (!tree) return;
+    if (tree->left && tree->right) {
+        tree->left->next = tree->right.get();
+    }
+    if (tree->right && tree->next && tree->next->left) {
+        tree->right->next = tree->next->left.get();
+    }
+    ConstructRightSibling(tree->left.get());
+    ConstructRightSibling(tree->right.get());
 }
 template <>
 struct SerializationTraits<unique_ptr<BinaryTreeNode<int>>>

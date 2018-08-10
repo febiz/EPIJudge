@@ -2,8 +2,12 @@
 #include "test_framework/generic_test.h"
 using std::vector;
 bool CanReachEnd(const vector<int>& max_advance_steps) {
-  // TODO - you fill in here.
-  return true;
+    int nsteps = 0, i = 0;
+    do {
+        nsteps = std::max(max_advance_steps[i++], --nsteps);
+    } while (i < max_advance_steps.size() && nsteps);
+
+    return i == max_advance_steps.size();
 }
 
 int main(int argc, char* argv[]) {

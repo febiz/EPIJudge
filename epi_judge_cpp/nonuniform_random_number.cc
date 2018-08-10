@@ -11,8 +11,14 @@ using std::unordered_map;
 using std::vector;
 int NonuniformRandomNumberGeneration(const vector<int>& values,
                                      const vector<double>& probabilities) {
-  // TODO - you fill in here.
-  return 0;
+    double r = rand() / static_cast<double>(RAND_MAX);
+    int i = 0;
+    double cumulative = 0;
+    for (; i < probabilities.size() && r > cumulative; ++i) {
+        cumulative += probabilities[i];
+    }
+
+    return values[i-1];
 }
 bool NonuniformRandomNumberGenerationRunner(
     TimedExecutor& executor, const vector<int>& values,

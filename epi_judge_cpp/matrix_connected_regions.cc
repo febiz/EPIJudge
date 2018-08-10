@@ -6,9 +6,28 @@ using std::deque;
 using std::vector;
 
 void FlipColor(int x, int y, vector<deque<bool>>* image_ptr) {
-  // TODO - you fill in here.
-  return;
+    vector<deque<bool>>& img = *image_ptr;
+    deque<std::pair<int, int> > coord_queue(1, std::make_pair(x, y));
+    const bool kFlipColor = img[x][y];
+    while (!coord_queue.empty()) {
+        std::pair<int, int> coord = coord_queue.front();
+        coord_queue.pop_front();
+        img[coord.first][coord.second] = !kFlipColor;
+        if (coord.first-1 >= 0 && img[coord.first-1][coord.second] == kFlipColor) {
+            coord_queue.push_back({coord.first-1, coord.second});
+        }
+        if (coord.first+1 < img.size() && img[coord.first+1][coord.second] == kFlipColor) {
+            coord_queue.push_back({coord.first+1, coord.second});
+        }
+        if (coord.second-1 >= 0 && img[coord.first][coord.second-1] == kFlipColor) {
+            coord_queue.push_back({coord.first, coord.second-1});
+        }
+        if (coord.second+1 < img[coord.first].size() && img[coord.first][coord.second+1] == kFlipColor) {
+            coord_queue.push_back({coord.first, coord.second+1});
+        }
+    }
 }
+
 vector<vector<int>> FlipColorWrapper(TimedExecutor& executor, int x, int y,
                                      vector<vector<int>> image) {
   vector<deque<bool>> b;

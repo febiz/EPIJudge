@@ -1,11 +1,16 @@
 #include <istream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
 using std::vector;
+using std::unordered_map;
+using std::unordered_set;
+
 typedef enum { kWhite, kBlack } Color;
 struct Coordinate {
   bool operator==(const Coordinate& that) const {
@@ -14,11 +19,64 @@ struct Coordinate {
 
   int x, y;
 };
+
+struct CoordinateHash {
+public:
+  std::size_t operator()(const Coordinate &c) const
+  {
+    return std::hash<int>()(c.x) ^ std::hash<int>()(c.y);
+  }
+};
+
+bool helper(unordered_map<Coordinate, vector<Coordinate>, CoordinateHash>& graph,
+            unordered_set<Coordinate, CoordinateHash>& visited,
+            vector<Coordinate>& result, Coordinate s, Coordinate e) {
+    if (s == e) {
+        return true;
+    }
+    if (visited.count(s) > 0) {
+        return false;
+    }
+    visited.insert(s);
+    for(auto it = graph[s].begin(); it != graph[s].end(); ++it) {
+        result.push_back(*it);
+        if (helper(graph, visited, result, *it, e)) {
+            return true;
+        }
+        result.pop_back();
+    }
+    return false;
+}
+
 vector<Coordinate> SearchMaze(vector<vector<Color>> maze, const Coordinate& s,
                               const Coordinate& e) {
-  // TODO - you fill in here.
-  return {};
+  unordered_map<Coordinate, vector<Coordinate>, CoordinateHash> graph;
+  for (int i = 0; i < maze.size(); ++i) {
+      for (int j = 0; j < maze[i].size(); ++j) {
+          if (maze[i][j] == kWhite) {
+              Coordinate curr = {i,j};
+              if (i - 1 >= 0 && maze[i-1][j] == kWhite) {
+                  graph[curr].push_back(Coordinate{i-1, j});
+              }
+              if (i + 1 < maze.size() && maze[i+1][j] == kWhite) {
+                  graph[curr].push_back(Coordinate{i+1, j});
+              }
+              if (j - 1 >= 0 && maze[i][j-1] == kWhite) {
+                  graph[curr].push_back(Coordinate{i, j-1});
+              }
+              if (j + 1 < maze[i].size() && maze[i][j+1] == kWhite) {
+                  graph[curr].push_back(Coordinate{i, j+1});
+              }
+
+          }
+      }
+  }
+  unordered_set<Coordinate, CoordinateHash> visited;
+  vector<Coordinate> result = {s};
+  bool found = helper(graph, visited, result, s, e);
+  return found ? result : vector<Coordinate>{};
 }
+
 template <>
 struct SerializationTraits<Color> : SerializationTraits<int> {
   using serialization_type = Color;

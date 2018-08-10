@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <iterator>
+#include <list>
 #include <set>
 #include <string>
 #include <vector>
@@ -6,6 +8,7 @@
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
+using std::list;
 using std::string;
 using std::vector;
 
@@ -15,8 +18,20 @@ struct Person {
 };
 
 void GroupByAge(vector<Person>* people) {
-  // TODO - you fill in here.
-  return;
+    vector<Person>& P = *people;
+    int max_age = 0;
+    vector<list<Person>> age_list;
+    for (Person& p : P) {
+        max_age = std::max(max_age, p.age + 1);
+        age_list.resize(max_age);
+        age_list[p.age].push_back(p);
+    }
+    auto it = P.begin();
+    for (auto person_list : age_list) {
+        for (auto p : person_list) {
+            *it++ = p;
+        }
+    }
 }
 template <>
 struct SerializationTraits<Person> : UserSerTraits<Person, int, string> {};

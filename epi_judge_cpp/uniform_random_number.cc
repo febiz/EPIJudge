@@ -16,9 +16,17 @@ int ZeroOneRandom() {
 }
 
 int UniformRandom(int lower_bound, int upper_bound) {
-  // TODO - you fill in here.
-  return 0;
+    int result, upper;
+    do {
+        result = 0, upper = pow(2, static_cast<int>(log2(upper_bound-lower_bound)));
+        for (; upper > 0; upper >>= 1) {
+            result += upper*ZeroOneRandom();
+        }
+    } while (result > upper_bound);
+
+    return result + lower_bound;
 }
+
 bool UniformRandomRunner(TimedExecutor& executor, int lower_bound,
                          int upper_bound) {
   vector<int> result;

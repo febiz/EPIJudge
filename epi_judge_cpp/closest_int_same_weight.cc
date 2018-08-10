@@ -1,7 +1,16 @@
 #include "test_framework/generic_test.h"
 unsigned long long ClosestIntSameBitCount(unsigned long long x) {
-  // TODO - you fill in here.
-  return 0;
+    // find first two bits that differ and swap them
+    int lsb = x & 1;
+    int c = 1;
+    while ((((x >> c) & 1L) == lsb) && c < 32) {
+        c++;
+    }
+    if (c == 32) {
+        // all bits are equal
+        throw(std::invalid_argument("x has no closest number with same bit count"));
+    }
+    return x^((1L << c-1) | (1L << c));
 }
 
 int main(int argc, char* argv[]) {

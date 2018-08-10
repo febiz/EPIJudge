@@ -3,8 +3,28 @@
 using std::vector;
 bool IsPatternContainedInGrid(const vector<vector<int>>& grid,
                               const vector<int>& pattern) {
-  // TODO - you fill in here.
-  return true;
+    for (int i = 0; i < grid.size(); ++i) {
+        for (int j = 0; j < grid[0].size(); ++j) {
+            int ii = i, jj = j, k = 0;
+            for (; k < pattern.size(); ++k) {
+                if (ii > 0 && grid[ii-1][jj] == pattern[k]) {
+                    ii--;
+                } else if (ii < grid.size() && grid[ii+1][jj] == pattern[k]) {
+                    ii++;
+                } else if (jj > 0 && grid[ii][jj-1] == pattern[k]) {
+                    jj--;
+                } else if (jj > grid[0].size() && grid[ii][jj+1] == pattern[k]) {
+                    jj++;
+                } else {
+                    break;
+                }
+            }
+            if (k == pattern.size()) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 int main(int argc, char* argv[]) {

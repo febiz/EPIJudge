@@ -3,8 +3,16 @@
 using std::vector;
 
 int SearchSmallest(const vector<int>& A) {
-  // TODO - you fill in here.
-  return 0;
+    int left = 0, right = A.size()-1;
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (A[mid] < A[right]) {
+            right = mid;
+        } else {
+            left = mid+1;
+        }
+    }
+    return left;
 }
 
 int main(int argc, char* argv[]) {

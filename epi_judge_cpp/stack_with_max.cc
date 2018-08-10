@@ -3,25 +3,43 @@
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
 using std::length_error;
+using std::max;
+using std::shared_ptr;
+
+template <class  T>
+struct NodeList {
+    NodeList(T val = {}, T max = {}, shared_ptr<NodeList<T>> node = nullptr) : data(val), oldMax(max), next(node) {}
+    T data;
+    T oldMax;
+    std::shared_ptr<NodeList<T>> next;
+};
 
 class Stack {
- public:
-  bool Empty() const {
-    // TODO - you fill in here.
-    return true;
-  }
-  int Max() const {
-    // TODO - you fill in here.
-    return 0;
-  }
-  int Pop() {
-    // TODO - you fill in here.
-    return 0;
-  }
-  void Push(int x) {
-    // TODO - you fill in here.
-    return;
-  }
+public:
+    Stack() : maxVal(std::numeric_limits<int>::min()), head(nullptr) {}
+    bool Empty() const {
+        return !head;
+    }
+    int Max() const {
+        return maxVal;
+    }
+    int Pop() {
+        int val = 0;
+        if (head) {
+            val = head->data;
+            maxVal = head->oldMax;
+            head = head->next;
+        }
+        return val;
+    }
+    void Push(int x) {
+        shared_ptr<NodeList<int>> newNode = std::make_shared<NodeList<int>>(NodeList<int>{x, maxVal, head});
+        head = newNode;
+        maxVal = max(maxVal, x);
+    }
+private:
+    shared_ptr<NodeList<int>> head;
+    int maxVal;
 };
 struct StackOp {
   std::string op;

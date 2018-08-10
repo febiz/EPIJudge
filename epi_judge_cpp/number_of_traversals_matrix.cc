@@ -1,8 +1,16 @@
 #include "test_framework/generic_test.h"
+#include <vector>
+
+using std::vector;
 
 int NumberOfWays(int n, int m) {
-  // TODO - you fill in here.
-  return 0;
+    vector<vector<int>> S(n, vector<int>(m, 1));
+    for (int i = 1; i < n; ++i) {
+        for (int j = 1; j < m; ++j) {
+            S[i][j] = S[i-1][j] + S[i][j-1];
+        }
+    }
+    return S[n-1][m-1];
 }
 
 int main(int argc, char* argv[]) {

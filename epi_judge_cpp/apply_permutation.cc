@@ -2,9 +2,25 @@
 #include "test_framework/generic_test.h"
 using std::vector;
 void ApplyPermutation(vector<int>* perm_ptr, vector<int>* A_ptr) {
-  // TODO - you fill in here.
-  return;
+    vector<int>& P = *perm_ptr;
+    vector<int>& A = *A_ptr;
+
+    if (A.empty()) return;
+
+    vector<bool> isPermuted(A.size(), false);
+
+    for (int i = 0; i < A.size(); ++i) {
+        if (!isPermuted[i]) {
+            int j = P[i];
+            do {
+                std::swap(A[i], A[j]);
+                isPermuted[j] = true;
+                j = P[j];
+            } while (j != i);
+        }
+    }
 }
+
 vector<int> ApplyPermutationWrapper(vector<int> perm, vector<int> A) {
   ApplyPermutation(&perm, &A);
   return A;

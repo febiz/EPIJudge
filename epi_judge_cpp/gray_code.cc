@@ -6,10 +6,39 @@
 #include "test_framework/timed_executor.h"
 using std::vector;
 
-vector<int> GrayCode(int num_bits) {
-  // TODO - you fill in here.
-  return {};
+bool DifferInOneBit(const int a, const int b) {
+    int tmp = a ^ b;
+    return (tmp != 0 && !(tmp & (tmp - 1)));
 }
+
+bool helper(vector<int>& result, vector<bool>& num_taken, int num_bits) {
+    if (result.size() == num_taken.size()) {
+        return DifferInOneBit(result.front(), result.back());
+    } else {
+        for (int i = 0; i < num_bits; ++i) {
+            int candidate = result.back() ^ (1 << i);
+            if (!num_taken[candidate]) {
+                result.push_back(candidate);
+                num_taken[candidate] = true;
+                if (helper(result, num_taken, num_bits)) {
+                    return true;
+                }
+                result.pop_back();
+                num_taken[candidate] = false;
+            }
+        }
+        return false;
+    }
+}
+
+vector<int> GrayCode(int num_bits) {
+    vector<int> result({0});
+    vector<bool> num_taken(pow(2, num_bits), false);
+    num_taken[0] = true;
+    helper(result, num_taken, num_bits);
+    return result;
+}
+
 bool DiffersByOneBit(int x, int y) {
   int bit_difference = x ^ y;
   return bit_difference && !(bit_difference & (bit_difference - 1));

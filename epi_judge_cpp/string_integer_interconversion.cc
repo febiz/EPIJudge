@@ -4,13 +4,33 @@
 using std::string;
 
 string IntToString(int x) {
-  // TODO - you fill in here.
-  return "";
+    int negative = x < 0 ? 1 : 0;
+    int len = (x == 0 ? 0 : log10(fabs(static_cast<double>(x)))) + negative + 1;
+
+    // write sign
+    string result(len, '0');
+    if (negative == 1) {
+        result[0] = '-';
+    }
+
+    // write number
+    for (int i = len-1; i >= negative; --i) {
+        result[i] = abs(x % 10) + '0';
+        x /= 10;
+    }
+
+    return result;
 }
+
 int StringToInt(const string& s) {
-  // TODO - you fill in here.
-  return 0;
+    int result = 0;
+    int sign = s[0] == '-' ? -1 : 1;
+    for (int i = sign < 0 ? 1 : 0; i < s.size(); ++i) {
+        result = 10*result + sign*(s[i] - '0');
+    }
+    return result;
 }
+
 void Wrapper(int x, const string& s) {
   if (IntToString(x) != s) {
     throw TestFailure("Int to string conversion failed");

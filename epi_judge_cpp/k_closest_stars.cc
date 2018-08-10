@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cmath>
+#include <queue>
 #include <vector>
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_utils.h"
+using std::priority_queue;
 using std::vector;
 
 struct Star {
@@ -19,9 +21,26 @@ struct Star {
 vector<Star> FindClosestKStars(vector<Star>::const_iterator stars_begin,
                                const vector<Star>::const_iterator& stars_end,
                                int k) {
-  // TODO - you fill in here.
-  return {};
+    priority_queue<Star, vector<Star>, std::less<>> max_heap;
+    int i = 0;
+    vector<Star>::const_iterator it = stars_begin;
+    for (; i < k && it != stars_end; ++i, ++it) {
+        max_heap.push(*it);
+    }
+    for (; it != stars_end; ++it) {
+        if (*it < max_heap.top()) {
+            max_heap.pop();
+            max_heap.push(*it);
+        }
+    }
+    vector<Star> result;
+    while (!max_heap.empty()) {
+        result.push_back(max_heap.top());
+        max_heap.pop();
+    }
+    return result;
 }
+
 template <>
 struct SerializationTraits<Star> : UserSerTraits<Star, double, double, double> {
 };

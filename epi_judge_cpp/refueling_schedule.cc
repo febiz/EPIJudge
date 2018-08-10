@@ -9,9 +9,18 @@ const int kMPG = 20;
 // gallons[i] is the amount of gas in city i, and distances[i] is the distance
 // city i to the next city.
 int FindAmpleCity(const vector<int>& gallons, const vector<int>& distances) {
-  // TODO - you fill in here.
-  return 0;
+    int ample_city = 0, tank = gallons[0]*kMPG;
+    for (int i = 1; i < gallons.size(); ++i) {
+        if (tank - distances[i-1] < 0) {
+            ample_city = i;
+            tank = gallons[i]*kMPG;
+        } else {
+            tank = tank - distances[i-1] + gallons[i]*kMPG;
+        }
+    }
+    return ample_city;
 }
+
 void FindAmpleCityWrapper(TimedExecutor& executor, const vector<int>& gallons,
                           const vector<int>& distances) {
   int result = executor.Run([&] { return FindAmpleCity(gallons, distances); });

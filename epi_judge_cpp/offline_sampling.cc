@@ -7,10 +7,14 @@
 #include "test_framework/timed_executor.h"
 using std::bind;
 using std::vector;
+
 void RandomSampling(int k, vector<int>* A_ptr) {
-  // TODO - you fill in here.
-  return;
+    vector<int>& A = *A_ptr;
+    for (int i = 0; i < k; ++i) {
+        std::swap(A[i], A[i + rand() % (A.size()-i)]);
+    }
 }
+
 bool RandomSamplingRunner(TimedExecutor& executor, int k, vector<int> A) {
   vector<vector<int>> results;
 

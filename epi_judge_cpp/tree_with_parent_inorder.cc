@@ -4,8 +4,46 @@
 using std::vector;
 
 vector<int> InorderTraversal(const unique_ptr<BinaryTreeNode<int>>& tree) {
-  // TODO - you fill in here.
-  return {};
+    // geez this was a pita to code
+    vector<int> result;
+    BinaryTreeNode<int> *curr = tree.get(), *visited = nullptr;
+    while (curr) {
+        bool left_visited = visited && (visited == curr->left.get());
+        bool right_visited = visited && (visited == curr->right.get());
+        if (curr->left && !left_visited && !right_visited) {
+            // visit left child if no child has been visited yet
+            // also check left because:
+            //          o
+            //         /
+            //        o <- need to check left when going up if there is no right child
+            //       /
+            //      o
+            curr = curr->left.get();
+        } else if (curr->right && !right_visited) {
+            // visit right child if it has not been visited yet
+            result.push_back(curr->data);
+            curr = curr->right.get();
+        } else if (!curr->right && left_visited) {
+            // we are coming from the left child but there is no right child
+            //          o
+            //           \
+            //            o <- we are here
+            //           /
+            //          o
+            // add data and continue with parent
+            result.push_back(curr->data);
+            visited = curr;
+            curr = curr->parent;
+        } else {
+            if (!curr->left && !curr->right) {
+                // we are at a leaf node
+                result.push_back(curr->data);
+            }
+            visited = curr;
+            curr = curr->parent;
+        }
+    }
+    return result;
 }
 
 int main(int argc, char* argv[]) {
